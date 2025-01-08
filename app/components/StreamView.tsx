@@ -25,7 +25,7 @@ type Song = {
   haveUpVoted: boolean;
 };
 
-export default function StreamView({creatorId , isCreator = true , playVideo = true} : {
+export default function StreamView({creatorId , isCreator = true , playVideo} : {
     creatorId: string,
     isCreator: boolean,
     playVideo: boolean,
@@ -60,7 +60,7 @@ export default function StreamView({creatorId , isCreator = true , playVideo = t
   useEffect(() => {
     fetchStreams();
     const interval = setInterval(() => {}, REFRESH_INTERVAL_MS);
-  }, []);
+  }, [currentSong]);
 
   const handleSubmit = async (url: string) => {
     const res = await axios.post("/api/streams" , {
@@ -103,10 +103,13 @@ export default function StreamView({creatorId , isCreator = true , playVideo = t
   };
 
   const handleVideoEnd = async () => {
-    if (songs.length > 0) {
-      const res = await axios.get('/api/streams/next')
+    try {
+      const res = await axios.get('/api/streams/next');
       setCurrentSong(res.data.stream.extractedId);
-      setSongs(q => q.filter(X => X.id !== res.data.stream.id))
+      setSongs((q) => q.filter((x) => x.id !== res.data.stream.id));
+      fetchStreams(); 
+    } catch (error) {
+      console.error("Error handling video end:", error);
     }
   }
 

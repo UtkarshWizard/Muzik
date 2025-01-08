@@ -11,6 +11,7 @@ export function CurrentlyPlaying({ videoId , playVideo , onVideoEnd }: { videoId
             width: '100%',
             playerVars: {
               autoplay: playVideo ? 1 : 0,
+              mute: 1
             },
           }}
           className="absolute top-0 left-0 w-full h-full"
